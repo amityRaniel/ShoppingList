@@ -17,7 +17,7 @@
  		<ul>
             <% _.each( rc.listItems, function( listItem ){ %>
                 <li>
-                    <%- listItem.name %>. price: 
+                    Item: <%- listItem.name %>. price: 
                     <%- listItem.price %>
                     <button type="button" class="<%-listItem.name%>">add</button>
                 </li>
@@ -38,12 +38,13 @@
         <ul>
             <% _.each( rc.listItems, function( listItem ){ %>
                 <li>
-                    <%- listItem.name %>
+                    <%- listItem.name %>. Number of items: <%- listItem.numOfItems %>
                     <button type="button" class="remove<%-listItem.id%>">x</button>
                 </li>
             <% }); %>
         </ul>
     </script>
+    <button class="btn" type="submit" onclick="self.location='http://www.paypal.com'">pay</button>
 
     <script src="shopping.js"></script>
 </body>

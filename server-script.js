@@ -33,6 +33,7 @@ connection.query(queryString, function(err, results) {
     	rows: obj
   	});
  res.setHeader('Content-Type', 'application/json');
+ res.setHeader("Access-Control-Allow-Origin", "*");
  res.end(json);
 });
 

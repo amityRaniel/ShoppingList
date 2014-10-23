@@ -18,7 +18,8 @@
         var Item = Backbone.Model.extend({
         	id: null,
         	name: "",
-        	price: null
+        	price: null,
+            numOfItems: null
         });
 
         //make the collections:
@@ -28,7 +29,6 @@
         });
         var ItemsList = Backbone.Collection.extend({model:Item});
         
-        // var itemsListView = new ItemsListView();
         // var itemsList = new ItemsList([
         //         {
         //             name: "television",
@@ -55,15 +55,28 @@
         	i:23,
         	initialize: function(options) {
         		this.list = options.model;
+                getData();
         		this.render();
+                this.listenTo(this.list, "add", this.render);
         	},
         	render: function() {
-        		$(this.el).html(template2({
+        		this.$el.html(template2({
         			listItems: this.list.toJSON()
         		}));
         		this.list.each(function(item, key) { //add the item to the selected list.
         			$('button.' + item.get("name")).bind("click", item, function(event) {
-        				selectedItemsList.add(event.data.clone());
+        				var ind = selectedItemsList.findWhere({name: item.get("name")});
+                        if (ind != undefined) {
+                            var num = ind.get("numOfItems");
+                            ind.set("numOfItems", num+1);
+                            selectedItemsList.trigger("add", ind);
+                        }
+                        else {
+                            var newIt = event.data.clone();
+                            newIt.set("numOfItems", 1);
+                            selectedItemsList.add(newIt);
+                            
+                        }
         			});
         		});
         		
@@ -77,8 +90,8 @@
         	initialize: function() {
         		this.list = selectedItemsList;
         		this.listenTo(this.list, "add", this.setAndRender);
-        		this.listenTo(this.list, "remove", this.render);
-        		this.render();
+                this.listenTo(this.list, "remove", this.render);
+                this.render();
 
         	},
         	renderSum: function() {
@@ -88,51 +101,53 @@
         		return this;
         	},
         	render: function() {
-        		$(this.el).html(template3({
+        		this.$el.html(template3({
         			listItems: this.list.toJSON()
         		}));
         		var that = this;
         		this.list.each(function(item, key) {//if remove button clicked, remove from selected list
         			$('button.remove' + item.get("id")).bind("click", item, function(event) {
-        				// alert(event.data.get("id"));
+                        // alert(event.data);
         				var it = selectedItemsList.at(key);
+                        var num = it.get("numOfItems");
+                        it.set("numOfItems", num - 1);
         				that.sum -= it.get("price");
-        				selectedItemsList.remove(it);
+        				if (num == 1) {
+                            selectedItemsList.remove(it);
+                        }
+                        else {
+                            selectedItemsList.trigger("remove", it);
+                        }
         			});
         		});
         		return this.renderSum();
         	},
-        	setAndRender: function() {
+        	setAndRender: function(data) {
         		var it = this.list.at(this.list.length - 1);
         		it.set("id", this.list.index++);
-        		this.sum += + it.get("price");
+        		this.sum += it.get("price");
         		return this.render();
         	}
         });
-		// $.getJSON("http://localhost:8081/",function(result){
-  //     		$.each(result, function(i, field){
-  //     			alert(i);
-  //       		alert(field);
-  //     		});
-  //   	});
 
 		//load the items list from the DB:
 		var itemsList = new ItemsList();
-		function server() {
-   			$.ajax({
+        function getData() {
+   			Backbone.ajax({
    				type: "GET",
    				url: "http://localhost:8081/hey",
    				crossDomain: true,
    				success: function(data, str, jqxhr) {
-   					alert(data);
-   					for (var i in data["rows"]) {
-   						itemsList.add(new Item({name: data["rows"]["row" + i]["name"], price: data["rows"]["row" + i]["price"]}))
+        			for (var i in data["rows"]) {
+        				itemsList.add(new Item({"name": data["rows"][i]["name"], "price": data["rows"][i]["price"]}))
    					}
-   				}
+        		},
+                error: function() {
+                    alert("failure!");
+                }
    			});
 		}
 
-		// server();
- 		var v = new SelectedItemsView();
+        var v = new SelectedItemsView();
  		var itemsListView = new ItemsListView({model: itemsList});
         
