@@ -3,6 +3,17 @@
 <html>
 <head>
 	<title>shopping list</title>
+    <link rel="stylesheet" type="text/css" href="bootstrap.css">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+
+    </style>
 </head>
 <body>
 	
@@ -10,42 +21,61 @@
     <script src="underscore.js"></script>
     <script src="backbone.js"></script>
     
-    <h2>
-		Items List:</h2>
-    <div id="items-list"></div>
-    <script type="text/template" class="template2">		
- 		<ul>
-            <% _.each( rc.listItems, function( listItem ){ %>
-                <li>
-                    Item: <%- listItem.name %>. price: 
-                    <%- listItem.price %>
-                    <button type="button" class="<%-listItem.name%>">add</button>
-                </li>
-            <% }); %>
-        </ul>
-    </script>
+    
 
-	<h2>
-		Items You Selected:</h2>
-    <div id="sum"></div>
-    <script type="text/template" class="template5">
-        <h4>
-            total to pay: <%- rc.listTitle %>
-        </h4>
-    </script>
-    <div id="another"></div>
-    <script type="text/template" class="template3">
-        <ul>
-            <% _.each( rc.listItems, function( listItem ){ %>
-                <li>
-                    <%- listItem.name %>. Number of items: <%- listItem.numOfItems %>
-                    <button type="button" class="remove<%-listItem.id%>">x</button>
-                </li>
-            <% }); %>
-        </ul>
-    </script>
-    <button class="btn" type="submit" onclick="self.location='http://www.paypal.com'">pay</button>
-
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+                <li class="nav-header">Total to pay:</li>
+                <li><div id="sum"></div>
+                <script type="text/template" class="template3">
+                    <h4>
+                        <%- rc.listTitle %>
+                    </h4>
+                </script></li>
+                <li><button class="btn" type="submit" onclick="self.location='http://www.paypal.com'">pay</button></li>
+                <li class="nav-header">Selected items:</li>
+                <div id="another">
+                <script type="text/template" class="template1">
+                    <ul>
+                        <% _.each( rc.listItems, function( listItem ){ %>
+                            <li>
+                                <%- listItem.name %>
+                                <button type="button" class="remove<%-listItem.id%>">x</button>
+                                (<%- listItem.numOfItems %>)
+                            </li>
+                        <% }); %>
+                    </ul>
+                </script>
+            </div>
+            </ul>
+          </div><!--/.well -->
+        </div>
+        <div class="span9">
+          <div class="hero-unit">
+            <h1>Shopping List</h1>
+            <p>This is a shooping list. Please choose the items you wish to buy by clicking the "add" button next to them, as many times as you want to buy this item. You can see the items you have chosen in the sidebar, with the total sum you need to pay. press on the "pay" button if you have finished and wish to pay.</p>
+          </div>
+          <div class="row-fluid">
+            <div id="items-list"></div>
+            <script type="text/template" class="template2">     
+        
+                <% _.each( rc.listItems, function( listItem ){ %>
+                    <div class="span4" id="items-list">
+                        <%- listItem.name %>. price: 
+                        <%- listItem.price %>
+                        <button type="button" class="<%-listItem.name%>">add</button>
+                    </div>
+                <% }); %>
+        
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+	
     <script src="shopping.js"></script>
 </body>
 </html>

@@ -3,15 +3,15 @@
         _.templateSettings.variable = "rc";
  
         //create my templates from the html page:
-        var template3 = _.template(
-            $( "script.template3" ).html()
+        var template1 = _.template(
+            $( "script.template1" ).html()
         );
  
         var template2 = _.template(
         	$( "script.template2" ).html()
         );
-        var template5 = _.template(
-        	$( "script.template5" ).html()
+        var template3 = _.template(
+        	$( "script.template3" ).html()
         );
 
         //make the model:
@@ -28,25 +28,6 @@
         	model: Item
         });
         var ItemsList = Backbone.Collection.extend({model:Item});
-        
-        // var itemsList = new ItemsList([
-        //         {
-        //             name: "television",
-        //             price: 324
-        //         },
-        //         {
-        //             name: "camera",
-        //             price: 25
-        //         },
-        //         {
-        //             name: "refrigirator",
-        //             price: 452
-        //         },
-        //         {
-        //             name: "air-conditoiner",
-        //             price: 234
-        //         }
-        //     ]);
 
 		//make the views:
 		var selectedItemsList = new Selected(); //same collection shared by the ItemsListView and SelectedItemsView
@@ -95,19 +76,18 @@
 
         	},
         	renderSum: function() {
-        		$("#sum").html(template5({
+        		$("#sum").html(template3({
         			listTitle: this.sum
         		}));
         		return this;
         	},
         	render: function() {
-        		this.$el.html(template3({
+        		this.$el.html(template1({
         			listItems: this.list.toJSON()
         		}));
         		var that = this;
         		this.list.each(function(item, key) {//if remove button clicked, remove from selected list
         			$('button.remove' + item.get("id")).bind("click", item, function(event) {
-                        // alert(event.data);
         				var it = selectedItemsList.at(key);
                         var num = it.get("numOfItems");
                         it.set("numOfItems", num - 1);
@@ -125,7 +105,7 @@
         	setAndRender: function(data) {
         		var it = this.list.at(this.list.length - 1);
         		it.set("id", this.list.index++);
-        		this.sum += it.get("price");
+        		this.sum += data.get("price");
         		return this.render();
         	}
         });
@@ -138,8 +118,9 @@
    				url: "http://localhost:8081/hey",
    				crossDomain: true,
    				success: function(data, str, jqxhr) {
+                    // alert("hi there");
         			for (var i in data["rows"]) {
-        				itemsList.add(new Item({"name": data["rows"][i]["name"], "price": data["rows"][i]["price"]}))
+        				itemsList.add(new Item({"name": data["rows"][i]["name"], "price": data["rows"][i]["price"]}));
    					}
         		},
                 error: function() {
